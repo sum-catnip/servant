@@ -7,6 +7,7 @@
 #include "module.h"
 #include "capability.h"
 #include "category.h"
+#include "parameter.h"
 
 #include "python_module.h"
 #include "python_category.h"
@@ -24,19 +25,27 @@ PYBIND11_EMBEDDED_MODULE(servant, m) {
         .def("add", &category::add_capability);
 
     py::class_<capability, std::shared_ptr<capability>>(m, "GenericCapability")
-        .def_property_readonly("name", &capability::name);
+        .def_property_readonly("name", &capability::name)
+        .def("add", &capability::add_parameter);
 
     py::class_<python_module, module>(m, "Module");
     
     py::class_<python_category, category, std::shared_ptr<python_category>>(m, "Category")
-        .def(py::init<python_module*, const std::string&>());
+        .def(py::init<const std::string&>())
+        .def(py::init<const std::string&, const std::vector<std::shared_ptr<capability>>>());
 
     py::class_<python_capability, capability, std::shared_ptr<python_capability>>(m, "Capability")
-        .def(py::init<python_category*, const std::string&, py::function>());
+        .def(py::init<const std::string&, py::function>())
+        .def(py::init<const std::string&, py::function, const std::vector<std::shared_ptr<parameter>>>());
 
-    // TODO: change the constructors as noted in testmod1
-    py::class_<parameter, std::shared_ptr<parameter>>(m, "Parameter")
-        .def(py::init<python_category*, const std::string&, py::function>());
+
+    // PARAMETERS
+
+    py::class_<parameter, std::shared_ptr<parameter>>(m, "BaseParameter");
+
+    py::class_<text, parameter, std::shared_ptr<text>>(m, "Text")
+        .def(py::init<>())
+        .def_property_readonly("value", &text::value);
 }
 
 #endif

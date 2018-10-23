@@ -5,7 +5,7 @@ category::category(const std::string& name)
     : m_name(name) { }
 
 category::category(const std::string& name, 
-    const std::vector<std::shared_ptr<capability>>& capabilities) : m_name(name) { 
+    const std::vector<std::shared_ptr<capability>> capabilities) : m_name(name) { 
         
     for(auto cap : capabilities) add_capability(cap);
 }
@@ -32,6 +32,6 @@ module*     category::parent() { return m_module; }
 
 void        category::parent(module* mod) { m_module = mod; }
 
-result category::pass_execution(const std::string& capability, json& args) {
+result category::pass_execution(const std::string& capability, js& args) {
     return m_capabilities[capability]->execute(args);
 }

@@ -4,16 +4,21 @@
 
 #include "logger.h"
 
-python_capability::python_capability(
-    category* category, 
-    const std::string& name, 
+python_capability::python_capability( 
+    const std::string& name,
     py::function capability)
-    : capability(category, name), m_pycapability(capability) { }
+    : capability(name), m_pycapability(capability) { }
+
+python_capability::python_capability(
+    const std::string& name, 
+    py::function capability,
+    const std::vector<std::shared_ptr<parameter>> params)
+    : capability(name, params), m_pycapability(capability) { }
 
 result python_capability::execute(json& params) {
     if(params.size() != m_params.size()) {
         std::string error = 
-            "internal error when trying to call capability " + m_fullname + ". "
+            "internal error when trying to call capability " + fullname() + ". "
             "capability parameter count is: [" + std::to_string(m_params.size()) + "] " 
             "given are: [" + std::to_string(params.size()) + "]. "
             "i bet the module author forgot to update the version number!";
@@ -42,12 +47,12 @@ result python_capability::execute(json& params) {
         return python_result.cast<result>();
     }
     catch(py::error_already_set& ex) { // capability threw exception
-        std::string error = "capability [" + m_fullname + "] threw an exception: " + ex.what();
+        std::string error = "capability [" + fullname() + "] threw an exception: " + ex.what();
         return result(result::type::ERROR, error);
     }
     catch(py::cast_error&) { // returned value was not of type result
         logger::log(logger::level::WARNING, 
-            "capability [" + m_fullname + "] returned an object that was not of type result. "
+            "capability [" + fullname() + "] returned an object that was not of type result. "
             "this should be fine as long as it's not an error. returned obj: " + 
             static_cast<std::string>(py::str(python_result)));
 

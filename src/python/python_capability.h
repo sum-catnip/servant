@@ -10,16 +10,19 @@
 
 namespace py = pybind11;
 
-class python_category;
-
 class python_capability : public capability {
 public:
     python_capability(
-        category* category, 
         const std::string& name, 
         py::function capability);
 
-    result execute(json& params) override;
+    python_capability(
+        const std::string& name, 
+        py::function capability,
+        const std::vector<std::shared_ptr<parameter>> params);
+
+
+    result execute(js& params) override;
 private:
     // the python method
     py::function m_pycapability;

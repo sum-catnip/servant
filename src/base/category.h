@@ -5,7 +5,7 @@
 
 #include <nlohmann/json.hpp>
 
-using nlohmann::json;
+using js = nlohmann::json;
 
 class module;
 
@@ -13,12 +13,12 @@ class category {
 public:
     category(const std::string& name);
     category(const std::string& name, 
-        const std::vector<std::shared_ptr<capability>>& capabilities);
+        const std::vector<std::shared_ptr<capability>> capabilities);
 
     void add_capability(std::shared_ptr<capability> capability);
     std::shared_ptr<capability> find_capability(const std::string capability);
 
-    result pass_execution(const std::string& capability, json& args);
+    result pass_execution(const std::string& capability, js& args);
 
     std::string name();
     std::string fullname();
