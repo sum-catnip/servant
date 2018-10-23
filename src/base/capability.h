@@ -8,7 +8,7 @@
 
 #include "parameter.h"
 
-using json = nlohmann::json;
+using js = nlohmann::json;
 
 class category;
 
@@ -29,8 +29,8 @@ public:
         std::vector<std::shared_ptr<parameter>> params);
 
     // to be overwritten by each language specific capability
-    virtual result execute(json& args) = 0;
-    virtual json   define();
+    virtual result execute(js& args) = 0;
+    virtual js     define();
     
     void add_parameter(std::shared_ptr<parameter> param);
 

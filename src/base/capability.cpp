@@ -14,8 +14,8 @@ capability::capability(const std::string& name,
 }
 
 
-json capability::define() {
-    json j {
+js capability::define() {
+    js j {
         { "name", m_name }
     };
 
