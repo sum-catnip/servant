@@ -33,9 +33,13 @@ protected:
 // }
 class text : public parameter {
 public:
+    text();
+
     std::shared_ptr<parameter> parse(const js& input) override;
     js define() override;
     std::string id() override;
+
+    std::string value();
 private:
     std::string m_value;
 };
