@@ -7,18 +7,19 @@
 #include "category.h"
 #include "capability.h"
 
-using nlohmann::json;
+using js = nlohmann::json;
 
 // abstract base class for language specific modules
 class module {
 public:
+    std::string fullname();
     std::string name();
     std::string version();
 
     result pass_execution(
         const std::string& category, 
         const std::string& capability,
-        json& args);
+        js& args);
 
     void   add_category(const std::shared_ptr<category> category);
     std::shared_ptr<category> find_category(const std::string category);

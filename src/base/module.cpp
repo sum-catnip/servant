@@ -17,8 +17,9 @@ module::module(
     // currently only inits all the members
 }
 
-std::string module::name()    { return m_name; }
-std::string module::version() { return m_version; }
+std::string module::fullname() { return m_name; }
+std::string module::name()     { return m_name; }
+std::string module::version()  { return m_version; }
 
 void module::add_category(const std::shared_ptr<category> category) {
     m_categories[category->name()] = category;
@@ -34,7 +35,7 @@ std::shared_ptr<category> module::find_category(const std::string category) {
 result module::pass_execution(
     const std::string& category, 
     const std::string& capability,
-    json& args) {
+    js& args) {
 
     return m_categories[category]->pass_execution(capability, args); 
 }
