@@ -1,0 +1,8 @@
+{
+    "id":      "testmod1",
+    "name":    "testmod 1",
+    "author":  "catnip",
+    "version": "1.0.0",
+    "lang":    "python",
+    "modfile": "testmod.py"
+}
