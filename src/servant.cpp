@@ -84,11 +84,9 @@ void servant::handle_get(http_request msg) {
         }
     }
     catch(const std::out_of_range& e) {
-        logger::log(logger::level::ERROR, std::string(
-            "a requested resource was not found. "
-            "details: ") + e.what());
-
-        msg.reply(status_codes::NotFound);
+        std::string error = std::string("a requested resource was not found. details: ") + e.what();
+        logger::log(logger::level::ERROR, error);
+        msg.reply(status_codes::NotFound, error);
     }
 }
 
