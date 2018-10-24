@@ -7,8 +7,9 @@ enable_testing()
 set(CMAKE_CXX_STANDARD 17)
 
 if(MSVC)
-    SET(CMAKE_CXX_FLAGS_DEBUG "/MTd")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /permissive /MT")
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MDd")
+    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MD")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /permissive")
     add_definitions(-D_CRT_SECURE_NO_WARNINGS) # we get it microsoft..
     add_definitions(-DHAVE_SNPRINTF) # python get your shit together
 endif()
