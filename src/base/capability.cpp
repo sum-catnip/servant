@@ -8,7 +8,8 @@ capability::capability(const std::string& name)
     : m_name(name) {}
 
 capability::capability(const std::string& name, 
-    std::vector<std::shared_ptr<parameter>> params) {
+    std::vector<std::shared_ptr<parameter>> params) 
+    : m_name(name) {
 
     for(auto param : params) add_parameter(param);    
 }
