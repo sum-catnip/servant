@@ -1,6 +1,7 @@
 #ifndef CATEGORY_H
 #define CATEGORY_H
 
+#include "i_definable.h"
 #include "capability.h"
 
 #include <nlohmann/json.hpp>
@@ -9,7 +10,7 @@ using js = nlohmann::json;
 
 class module;
 
-class category {
+class category : public i_definable {
 public:
     category(const std::string& name);
     category(const std::string& name, 
@@ -19,6 +20,7 @@ public:
     std::shared_ptr<capability> find_capability(const std::string capability);
 
     result pass_execution(const std::string& capability, js& args);
+    virtual js define() override;
 
     std::string name();
     std::string fullname();

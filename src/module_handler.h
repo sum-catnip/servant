@@ -7,6 +7,7 @@
 #include <streambuf>
 #include <nlohmann/json.hpp>
 
+#include "i_definable.h"
 #include "python_module.h"
 #include "python_capability.h"
 #include "module.h"
@@ -14,7 +15,7 @@
 using     js   = nlohmann::json;
 namespace fs = std::filesystem;
 
-class module_handler {
+class module_handler : public i_definable {
 enum class language { error, python };
 public:
     module_handler();
@@ -26,6 +27,8 @@ public:
         const std::string& category,
         const std::string& capability,
         js& args);
+
+    js define() override;
 
     // const ref to unique_ptr since we can't copy a unique_ptr
     // i mean .. thats kinds the point isn't it?

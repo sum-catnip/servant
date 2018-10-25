@@ -5,18 +5,20 @@
 #include <any>
 #include <nlohmann/json.hpp>
 
+#include "i_definable.h"
+
 using js = nlohmann::json;
 
 class capability;
 
-class parameter {
+class parameter : public i_definable {
 public:
     // can't make this unique because of a limitation in the python interpreter :(
     virtual std::shared_ptr<parameter> parse(const js& input) = 0;
     // name of the parameter type
     virtual std::string id() = 0;
     // returns the stucture of the parameter as json (defines the values)
-    virtual js  define();
+    virtual js  define() override;
 
     capability* parent();
     void        parent(capability* cap);

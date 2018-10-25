@@ -39,3 +39,17 @@ result module::pass_execution(
 
     return m_categories[category]->pass_execution(capability, args); 
 }
+
+js module::define() {
+    js j {
+        { "id",      m_id      },
+        { "name",    m_name    },
+        { "version", m_version },
+        { "author",  m_author  }
+    };
+
+    for(auto cat : m_categories)
+        j["categories"].push_back(cat.second->define());
+    
+    return j;
+}

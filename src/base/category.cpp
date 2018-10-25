@@ -35,3 +35,12 @@ void        category::parent(module* mod) { m_module = mod; }
 result category::pass_execution(const std::string& capability, js& args) {
     return m_capabilities[capability]->execute(args);
 }
+
+js category::define() {
+    js j {{ "name", m_name }};
+
+    for(auto cap : m_capabilities)
+        j["capabilities"].push_back(cap.second->define());
+
+    return j;
+}

@@ -33,24 +33,24 @@ void servant::handle_get(http_request msg) {
         if(parts.at(0) == "modules") {
             switch(parts.size()) {
                 case 1: // modules
-                    /*msg.reply(status_codes::OK, m_modules
-                        ->define()
-                        .dump());*/
+                    msg.reply(status_codes::OK, m_modules
+                        .define()
+                        .dump());
                     break;
 
                 case 3: // modules/module/version
-                    /*msg.reply(status_codes::OK, m_modules
+                    msg.reply(status_codes::OK, m_modules
                         .find_module(parts[1], parts[2])
                         ->define()
-                        .dump());*/
+                        .dump());
                     break;
 
                 case 4: // modules/module/version/category
-                    /*msg.reply(status_codes::OK, m_modules
+                    msg.reply(status_codes::OK, m_modules
                         .find_module(parts[1], parts[2])
                         ->find_category(parts[3])
                         ->define()
-                        .dump());*/
+                        .dump());
 
                     break;
 
@@ -65,12 +65,12 @@ void servant::handle_get(http_request msg) {
                     break;
 
                 case 6: // modules/module/version/category/capability/0
-                    /*msg.reply(status_codes::OK, m_modules
+                    msg.reply(status_codes::OK, m_modules
                         .find_module(parts[1], parts[2])
                         ->find_category(parts[3])
                         ->find_capability(parts[4])
                         ->define()
-                        .dump());*/
+                        .dump());
                     break;
 
                 default:

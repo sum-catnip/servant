@@ -93,6 +93,15 @@ result module_handler::pass_execution(
     }
 }
 
+js module_handler::define() {
+    js j{};
+    
+    for(auto& mod : m_modules)
+        j["modules"].push_back(mod.second->define());
+
+    return j;
+}
+
 void module_handler::load_module(const fs::path& modpath, js& config_j) {
     // determine language of module
     js id_j       = config_j["id"];

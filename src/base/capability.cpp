@@ -16,12 +16,10 @@ capability::capability(const std::string& name,
 
 
 js capability::define() {
-    js j {
-        { "name", m_name }
-    };
+    js j {{ "name", m_name }};
 
-    for(int c = 0; c < m_params.size(); c++ /* punny */)        
-        j["parameters"][c] = m_params[c]->define();
+    for(auto param : m_params)
+        j["parameters"].push_back(param->define());
 
     return j;
 }

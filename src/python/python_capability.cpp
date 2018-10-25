@@ -1,8 +1,12 @@
+#include <nlohmann/json.hpp>
+
 #include "python_capability.h"
 #include "python_category.h"
 #include "python_module.h"
 
 #include "logger.h"
+
+using js = nlohmann::json;
 
 python_capability::python_capability( 
     const std::string& name,
@@ -15,7 +19,7 @@ python_capability::python_capability(
     const std::vector<std::shared_ptr<parameter>> params)
     : capability(name, params), m_pycapability(capability) { }
 
-result python_capability::execute(json& params) {
+result python_capability::execute(js& params) {
     if(params.size() != m_params.size()) {
         std::string error = 
             "internal error when trying to call capability " + fullname() + ". "

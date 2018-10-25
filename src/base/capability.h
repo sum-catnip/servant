@@ -6,11 +6,10 @@
 #include <string>
 #include <vector>
 
+#include "i_definable.h"
 #include "parameter.h"
 
 using js = nlohmann::json;
-
-class category;
 
 class result {
 public:
@@ -22,7 +21,9 @@ private:
     type m_type;
 };
 
-class capability {
+class category;
+
+class capability : public i_definable {
 public:
     capability(const std::string& name);
     capability(const std::string& name, 
@@ -30,7 +31,7 @@ public:
 
     // to be overwritten by each language specific capability
     virtual result execute(js& args) = 0;
-    virtual js     define();
+    virtual js     define() override;
     
     void add_parameter(std::shared_ptr<parameter> param);
 
