@@ -1,6 +1,3 @@
-[submodule "inc/json"]
-	path = inc/json
-	url = https://github.com/nlohmann/json.git
 [submodule "inc/pybind11"]
 	path = inc/pybind11
 	url = https://github.com/pybind/pybind11.git
