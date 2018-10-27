@@ -1,4 +1,4 @@
-#include <nlohmann/json.hpp>
+
 
 #include "python_capability.h"
 #include "python_category.h"
@@ -6,7 +6,7 @@
 
 #include "logger.h"
 
-using js = nlohmann::json;
+
 
 python_capability::python_capability( 
     const std::string& name,
@@ -19,34 +19,30 @@ python_capability::python_capability(
     const std::vector<std::shared_ptr<parameter>> params)
     : capability(name, params), m_pycapability(capability) { }
 
-result python_capability::execute(js& params) {
-    if(params.size() != m_params.size()) {
-        std::string error = 
-            "internal error when trying to call capability " + fullname() + ". "
-            "capability parameter count is: [" + std::to_string(m_params.size()) + "] " 
-            "given are: [" + std::to_string(params.size()) + "]. "
-            "i bet the module author forgot to update the version number!";
-
-        return result(result::type::ERROR, error);
-    }
+result python_capability::execute(json::value& params) {
+    if(params.size() != m_params.size()) return result(result::type::ERROR, 
+        "internal error when trying to call capability " + fullname() + ". "
+        "capability parameter count is: [" + std::to_string(m_params.size()) + "] " 
+        "given are: [" + std::to_string(params.size()) + "]. "
+        "i bet the module author forgot to update the version number!");
 
     // somehow need to check the function param count
     // if thats even possible in pybind..
-    // maybe lets do an exec :/
+    // maybe i'll do an exec :/
 
-    py::args args{};
-    // parse all the params and transform them to python args
-    for(int c = 0; c < params.size(); c++ /* pun intended */) {
-        // this will throw an exception if it failed to parse
-        // so ill need to catch it ^^
-        // knowing myself i will pops forget tho
-        args[c] = m_params[c]->parse(params[c]);
-    }
-    
+    py::list list{};
+
     // needed in outer scope for error handling
     py::object python_result;
     try {
-        python_result = m_pycapability(args);
+        for(int c = 0; c < params.size(); c++ /* pun intended */) {
+            // this will throw an exception if it failed to parse
+            // so ill need to catch it ^^
+            // knowing myself i will props forget tho
+            list.append(m_params[c]->parse(params.as_array()[c]));
+        }
+
+        python_result = m_pycapability(*list);
         // return value should be a of type result but no worries
         return python_result.cast<result>();
     }

@@ -17,14 +17,12 @@ public:
         py::function capability);
 
     python_capability(
-        const std::string& name, 
-        py::function capability,
+        const std::string& name, py::function capability,
         const std::vector<std::shared_ptr<parameter>> params);
 
-
-    result execute(js& params) override;
+    result execute(json::value& params) override;
 private:
-    // the python method
+    // the python method to be executed
     py::function m_pycapability;
 };
 

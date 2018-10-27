@@ -4,7 +4,7 @@
 #include "python_capability.h"
 #include "category.h"
 
-#include <nlohmann/json.hpp>
+
 #include <pybind11/embed.h>
 #include <vector>
 #include <string>
@@ -17,7 +17,7 @@ class python_module;
 class python_category : public category {
 public:
     python_category(const std::string& name);
-    python_category(const std::string& name, 
+    python_category(const std::string& name,
         const std::vector<std::shared_ptr<capability>> capabilities);
 };
 
