@@ -1,13 +1,13 @@
 #ifndef SERVANT_H
 #define SERVANT_H
 
-#include <string>
-
 #include "module_handler.h"
 
-#include "cpprest/http_listener.h"
-#include "cpprest/uri.h"
-#include "cpprest/asyncrt_utils.h"
+#include <string>
+
+#include <cpprest/http_listener.h>
+#include <cpprest/uri.h>
+#include <cpprest/asyncrt_utils.h>
 
 using namespace web;
 using namespace http;

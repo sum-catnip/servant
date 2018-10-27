@@ -2,20 +2,23 @@
 #define CAPABILITY_H
 
 #include <pybind11/embed.h>
-#include <nlohmann/json.hpp>
+
 #include <string>
 #include <vector>
 
 #include "i_definable.h"
 #include "parameter.h"
 
-using js = nlohmann::json;
+
 
 class result {
 public:
     enum class type {OK, ERROR};
 
     result(type result_type, const std::string& message);
+
+    type result_type();
+    std::string result_message();
 private:
     std::string m_message;
     type m_type;
@@ -30,8 +33,8 @@ public:
         std::vector<std::shared_ptr<parameter>> params);
 
     // to be overwritten by each language specific capability
-    virtual result execute(js& args) = 0;
-    virtual js     define() override;
+    virtual result      execute(json::value& args) = 0;
+    virtual json::value define() override;
     
     void add_parameter(std::shared_ptr<parameter> param);
 

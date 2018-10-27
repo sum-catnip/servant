@@ -24,33 +24,28 @@ void servant::start() {
 void servant::handle_get(http_request msg) {
     logger::log(logger::level::DEBUG, msg.to_string());
     std::vector<std::string> parts{};
-    for(string_t part : uri::split_path(msg.relative_uri().to_string())) {
+    for(string_t part : uri::split_path(msg.relative_uri().to_string()))
         parts.push_back(conversions::to_utf8string(part));
-    }
 
     try {
-
+        // in case i want to offer different endpoints in the future
         if(parts.at(0) == "modules") {
             switch(parts.size()) {
                 case 1: // modules
-                    msg.reply(status_codes::OK, m_modules
-                        .define()
-                        .dump());
+                    msg.reply(status_codes::OK, m_modules.define());
                     break;
 
                 case 3: // modules/module/version
                     msg.reply(status_codes::OK, m_modules
                         .find_module(parts[1], parts[2])
-                        ->define()
-                        .dump());
+                        ->define());
                     break;
 
                 case 4: // modules/module/version/category
                     msg.reply(status_codes::OK, m_modules
                         .find_module(parts[1], parts[2])
                         ->find_category(parts[3])
-                        ->define()
-                        .dump());
+                        ->define());
 
                     break;
 
@@ -59,8 +54,7 @@ void servant::handle_get(http_request msg) {
                         .find_module(parts[1], parts[2])
                         ->find_category(parts[3])
                         ->find_capability(parts[4])
-                        ->define()
-                        .dump());
+                        ->define());
 
                     break;
 
@@ -69,8 +63,7 @@ void servant::handle_get(http_request msg) {
                         .find_module(parts[1], parts[2])
                         ->find_category(parts[3])
                         ->find_capability(parts[4])
-                        ->define()
-                        .dump());
+                        ->define());
                     break;
 
                 default:
@@ -78,10 +71,10 @@ void servant::handle_get(http_request msg) {
                         "there was a request with an invalid URI. "
                         "either the client has a but or someine is mocking your server");
 
-                    msg.reply(status_codes::NotFound);
+                    msg.reply(status_codes::NotFound, "provided resource path has an invaid amound of elements");
                     break;
             }
-        }
+        } else msg.reply(status_codes::NotFound, "the requested endpoint was not found");
     }
     catch(const std::out_of_range& e) {
         std::string error = std::string("a requested resource was not found. details: ") + e.what();
@@ -92,4 +85,50 @@ void servant::handle_get(http_request msg) {
 
 void servant::handle_post(http_request msg) {
     logger::log(logger::level::DEBUG, msg.to_string());
+
+    std::vector<std::string> parts{};
+    for(string_t part : uri::split_path(msg.relative_uri().to_string()))
+        parts.push_back(conversions::to_utf8string(part));
+        
+    try {
+        // in case i want to offer different endpoints in the future
+        if(parts.at(0) == "modules") {
+            result res = m_modules.pass_execution(
+                parts.at(1), 
+                parts.at(2), 
+                parts.at(3), 
+                parts.at(4), 
+                msg.extract_json().get()
+            );
+
+            switch(res.result_type()) {
+                case result::type::ERROR:
+                    msg.reply(status_codes::InternalError, res.result_message());
+                    break;
+
+                case result::type::OK:
+                    msg.reply(status_codes::OK, res.result_message());
+                    break;
+
+                default:
+                    msg.reply(status_codes::NotImplemented, "the servant author forgot to implement this result type.. lol");
+                    break;
+            }
+        }
+    }
+    catch(const std::out_of_range& e) {
+        std::string error = std::string("a requested resource was not found. details: ") + e.what();
+        logger::log(logger::level::ERROR, error);
+        msg.reply(status_codes::NotFound, error);
+    }
+    catch(const json::json_exception& e) {
+        std::string error = std::string("error parsing request body. details: ") + e.what();
+        logger::log(logger::level::ERROR, error);
+        msg.reply(status_codes::BadRequest, error);
+    }
+    catch(const std::exception& e) {
+        logger::log(logger::level::ERROR, 
+            std::string("something bad happened while executing a capability. details: ") + e.what());
+        msg.reply(status_codes::InternalError);
+    }
 }

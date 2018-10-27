@@ -1,12 +1,13 @@
 #ifndef I_DEFINABLE_H
 #define I_DEFINABLE_H
 
-#include <nlohmann/json.hpp>
+#include <cpprest/json.h>
 
-using js = nlohmann::json;
+using namespace web;
+using namespace utility;
 
 class i_definable {
-    virtual js define() = 0;
+    virtual json::value define() = 0;
 };
 
 #endif

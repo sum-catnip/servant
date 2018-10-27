@@ -5,14 +5,12 @@
 #include <vector>
 #include <fstream>
 #include <streambuf>
-#include <nlohmann/json.hpp>
 
 #include "i_definable.h"
 #include "python_module.h"
 #include "python_capability.h"
 #include "module.h"
 
-using     js   = nlohmann::json;
 namespace fs = std::filesystem;
 
 class module_handler : public i_definable {
@@ -26,9 +24,9 @@ public:
         const std::string& module_version,
         const std::string& category,
         const std::string& capability,
-        js& args);
+        json::value& args);
 
-    js define() override;
+    json::value define() override;
 
     // const ref to unique_ptr since we can't copy a unique_ptr
     // i mean .. thats kinds the point isn't it?
@@ -41,8 +39,8 @@ private:
     const std::string CONFIG_FILENAME{"config.json"};
     std::map<std::string, std::unique_ptr<module>> m_modules;
     //std::vector<std::unique_ptr<module>> m_modules;
-    void load_module(const fs::path& modpath, js& config_j);
-    language parse_lang(std::string lang_string);
+    void load_module(const fs::path& modpath, json::value& config_j);
+    language parse_lang(const std::string& lang_string);
 };
 
 #endif

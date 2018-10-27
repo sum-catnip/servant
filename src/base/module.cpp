@@ -17,11 +17,12 @@ module::module(
     // currently only inits all the members
 }
 
-std::string module::fullname() { return m_name; }
-std::string module::name()     { return m_name; }
+std::string module::fullname() { return m_id;      }
+std::string module::name()     { return m_name;    }
 std::string module::version()  { return m_version; }
 
 void module::add_category(const std::shared_ptr<category> category) {
+    category->parent(this);
     m_categories[category->name()] = category;
 }
 
@@ -35,21 +36,24 @@ std::shared_ptr<category> module::find_category(const std::string category) {
 result module::pass_execution(
     const std::string& category, 
     const std::string& capability,
-    js& args) {
+    json::value& args) {
 
     return m_categories[category]->pass_execution(capability, args); 
 }
 
-js module::define() {
-    js j {
-        { "id",      m_id      },
-        { "name",    m_name    },
-        { "version", m_version },
-        { "author",  m_author  }
-    };
+json::value module::define() {
+    json::value j;
 
-    for(auto cat : m_categories)
-        j["categories"].push_back(cat.second->define());
-    
+    j[L"id"]      = json::value::string(conversions::to_string_t(m_id));
+    j[L"name"]    = json::value::string(conversions::to_string_t(m_name));
+    j[L"version"] = json::value::string(conversions::to_string_t(m_version));
+    j[L"author"]  = json::value::string(conversions::to_string_t(m_author));
+
+    std::vector<json::value> json_categories{};
+    for(auto& cat : m_categories)
+        json_categories.push_back(cat.second->define());
+
+    j[L"categories"] = json::value::array(json_categories);
+
     return j;
 }

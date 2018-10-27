@@ -15,11 +15,16 @@ capability::capability(const std::string& name,
 }
 
 
-js capability::define() {
-    js j {{ "name", m_name }};
+json::value capability::define() {
+    json::value j;
 
-    for(auto param : m_params)
-        j["parameters"].push_back(param->define());
+    j[L"name"] = json::value::string(conversions::to_string_t(m_name));
+
+    std::vector<json::value> json_params{};
+    for(auto& param : m_params)
+        json_params.push_back(param->define());
+
+    j[L"parameters"] = json::value::array(json_params);
 
     return j;
 }
@@ -30,7 +35,7 @@ void capability::add_parameter(std::shared_ptr<parameter> param) {
 }
 
 std::string capability::fullname() {
-    return (m_category? m_category->fullname() : std::string("???") + "." + m_name);
+    return (m_category? m_category->fullname() : std::string("???")) + "." + m_name;
 }
 
 std::string capability::name()   { return m_name;     }
@@ -48,3 +53,6 @@ result::result(type result_type, const std::string& message)
         logger::log(logger::level::ERROR, message);
     }
 }
+
+result::type result::result_type()    { return m_type;    }
+std::string  result::result_message() { return m_message; }

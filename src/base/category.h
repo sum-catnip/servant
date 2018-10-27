@@ -1,12 +1,10 @@
 #ifndef CATEGORY_H
 #define CATEGORY_H
 
+#include <map>
+
 #include "i_definable.h"
 #include "capability.h"
-
-#include <nlohmann/json.hpp>
-
-using js = nlohmann::json;
 
 class module;
 
@@ -19,8 +17,8 @@ public:
     void add_capability(std::shared_ptr<capability> capability);
     std::shared_ptr<capability> find_capability(const std::string capability);
 
-    result pass_execution(const std::string& capability, js& args);
-    virtual js define() override;
+    result pass_execution(const std::string& capability, json::value& args);
+    virtual json::value define() override;
 
     std::string name();
     std::string fullname();

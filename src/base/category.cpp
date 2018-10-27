@@ -32,15 +32,20 @@ module*     category::parent() { return m_module; }
 
 void        category::parent(module* mod) { m_module = mod; }
 
-result category::pass_execution(const std::string& capability, js& args) {
+result category::pass_execution(const std::string& capability, json::value& args) {
     return m_capabilities[capability]->execute(args);
 }
 
-js category::define() {
-    js j {{ "name", m_name }};
+json::value category::define() {
+    json::value j;
 
-    for(auto cap : m_capabilities)
-        j["capabilities"].push_back(cap.second->define());
+    j[L"name"] = json::value::string(conversions::to_string_t(m_name));
+
+    std::vector<json::value> json_capabilities{};
+    for(auto& cap : m_capabilities)
+        json_capabilities.push_back(cap.second->define());
+
+    j[L"capabilities"] = json::value::array(json_capabilities);
 
     return j;
 }

@@ -38,7 +38,7 @@ void module_handler::load_modules(const std::string& modules_path) {
                 fs::directory_entry config_file = fs::directory_entry(config_path);
                 if(config_file.is_regular_file()) {
                     std::ifstream config_s(config_path.string());
-                    load_module(item.path(), js::parse(config_s));
+                    load_module(item.path(), json::value::parse(config_s));
                 }
             }
             catch(fs::filesystem_error& ex) {
@@ -54,10 +54,10 @@ void module_handler::load_modules(const std::string& modules_path) {
                     "error: " + ex.what());
                 }
             }
-            catch(js::parse_error& ex) {
+            catch(json::json_exception& ex) {
                 logger::log(logger::level::ERROR,
                     "failed to load module at [" + item.path().string() + "] "
-                    "because the config was not a valid json. \n"
+                    "because the config was not a valid json string. \n"
                     "ex: " + ex.what());
             }
         }
@@ -74,7 +74,7 @@ result module_handler::pass_execution(
     const std::string& module_version,
     const std::string& category,
     const std::string& capability,
-    js& args) {
+    json::value& args) {
         
     // put python module stuff in generic module
     try { return find_module(module_id, module_version)->pass_execution(category, capability, args); }
@@ -93,17 +93,42 @@ result module_handler::pass_execution(
     }
 }
 
-js module_handler::define() {
-    js j{};
-    
+json::value module_handler::define() {
+    json::value j;
+    std::vector<json::value> json_modules{};
+
     for(auto& mod : m_modules)
-        j["modules"].push_back(mod.second->define());
+        json_modules.push_back(mod.second->define());
+
+    j[L"modules"] = json::value::array(json_modules);
 
     return j;
 }
 
-void module_handler::load_module(const fs::path& modpath, js& config_j) {
-    // determine language of module
+void module_handler::load_module(const fs::path& modpath, json::value& config_j) {
+    std::string id; 
+    std::string lang;
+    std::string name;
+    std::string author;
+    std::string version;
+    std::string modfile;
+
+    try {
+        // on windows string_t is a typedef to std::wstring but std::string on linux...
+        id      = conversions::to_utf8string(config_j[L"id"].as_string());
+        lang    = conversions::to_utf8string(config_j[L"lang"].as_string());
+        name    = conversions::to_utf8string(config_j[L"name"].as_string());
+        author  = conversions::to_utf8string(config_j[L"author"].as_string());
+        version = conversions::to_utf8string(config_j[L"version"].as_string());
+        modfile = conversions::to_utf8string(config_j[L"modfile"].as_string());
+    }
+    catch(json::json_exception e) {
+        logger::log(logger::level::ERROR, 
+            "module at [" + modpath.string() + "] has an invalid config. details: " + e.what());
+
+        return;
+    }
+    /*
     js id_j       = config_j["id"];
     js lang_j     = config_j["lang"];
     js name_j     = config_j["name"];
@@ -123,14 +148,7 @@ void module_handler::load_module(const fs::path& modpath, js& config_j) {
 
         return;
     }
-
-    std::string id      = id_j.get<std::string>();
-    std::string lang    = lang_j.get<std::string>();
-    std::string name    = name_j.get<std::string>();
-    std::string author  = author_j.get<std::string>();
-    std::string version = version_j.get<std::string>();
-    std::string modfile = modfile_j.get<std::string>();
-
+    */
     // check if modfile exists and transform to absolute path
     try { modfile = (modpath / modfile).string(); }
     catch(fs::filesystem_error& ex) {
@@ -189,7 +207,7 @@ const std::unique_ptr<module>& module_handler::find_module(const std::string& mo
     return m_modules.at(module_id);
 }
 
-module_handler::language module_handler::parse_lang(std::string lang_string) {
+module_handler::language module_handler::parse_lang(const std::string& lang_string) {
     if(lang_string == "python") { return language::python; }
     else { return language::error; }
 }

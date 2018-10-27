@@ -2,13 +2,10 @@
 #define MODULE_H
 
 #include <string>
-#include <nlohmann/json.hpp>
 
 #include "i_definable.h"
 #include "category.h"
 #include "capability.h"
-
-using js = nlohmann::json;
 
 // abstract base class for language specific modules
 class module : public i_definable {
@@ -20,11 +17,11 @@ public:
     result pass_execution(
         const std::string& category, 
         const std::string& capability,
-        js& args);
+        json::value& args);
 
-    virtual js define() override;
+    virtual json::value define() override;
 
-    void   add_category(const std::shared_ptr<category> category);
+    void add_category(const std::shared_ptr<category> category);
     std::shared_ptr<category> find_category(const std::string category);
 protected:
 
