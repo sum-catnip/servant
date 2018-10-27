@@ -2,11 +2,19 @@ import servant
 
 print('waddup pimps from testmod1')
 
-def test():
-    print('HUHU!')
+class TestCat(servant.Category):
+    def __init__(self):
+        print('init called in testcat')
+        caps = [
+            servant.Capability("testcap1", self.testcap1, [ servant.Text() ]),
+            servant.Capability("testcap2", self.testcap2, [ servant.Text(), servant.Text() ]),
+        ]
+        super().__init__("testcat", caps)
+    
+    def testcap1(self, text):
+        print('testcap1 called with {}'.format(text.value))
 
-# ok so why do i have the parent in the constructor but still have to explicitly add
-# i should probs remove it from the constructor 
+    def testcap2(self, text1, text2):
+        print('testcap2 called with {}, {}'.format(text1.value, text2.value))
 
-cat = servant.Category("salat", [servant.Capability("keks", test, [servant.Text()])])
-__module__.add(cat)
+__module__.add(TestCat())
