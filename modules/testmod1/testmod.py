@@ -1,20 +1,42 @@
+import inspect
 import servant
 
 print('waddup pimps from testmod1')
 
-class TestCat(servant.Category):
+def capability(name, *args):
+    def decorator(func): 
+        func.capability_name = name
+        func.capability_args = args
+        return func
+    return decorator
+
+
+class Category(servant.Category):
+    def __init__(self, name, id_):
+        # need to do this before getmembers to prevent 'MemoryError: bad allocation'
+        super().__init__(name, id_)
+        for item in inspect.getmembers(self):
+            value = item[1]
+            if hasattr(value, 'capability_name') and hasattr(value, 'capability_args'):
+                self.add(servant.Capability(value.capability_name, value, list(value.capability_args)))
+
+
+class TestCat(Category):
     def __init__(self):
         print('init called in testcat')
-        caps = [
-            servant.Capability("testcap1", self.testcap1, [ servant.Text() ]),
-            servant.Capability("testcap2", self.testcap2, [ servant.Text(), servant.Text() ]),
-        ]
-        super().__init__("testcat", caps)
+        super().__init__("testcat", "testcat")
     
+    @capability('testcap 1', servant.Text())
     def testcap1(self, text):
         print('testcap1 called with {}'.format(text.value))
 
+    @capability('testcap 2', servant.Text(), servant.Text())
     def testcap2(self, text1, text2):
-        print('testcap2 called with {}, {}'.format(text1.value, text2.value))
+        raise EnvironmentError('hi')
+        print('testcap2 called with {}'.format(text1))
 
-__module__.add(TestCat())
+cat = TestCat()
+__module__.add(cat)
+
+print(cat.testcap1)
+print(cat.testcap2)
