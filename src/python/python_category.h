@@ -16,8 +16,8 @@ class python_module;
 
 class python_category : public category {
 public:
-    python_category(const std::string& name);
-    python_category(const std::string& name,
+    python_category(const std::string& name, const std::string& id);
+    python_category(const std::string& name, const std::string& id,
         const std::vector<std::shared_ptr<capability>> capabilities);
 };
 

@@ -4,12 +4,12 @@
 
 #include "logger.h"
 
-capability::capability(const std::string& name)
-    : m_name(name) {}
+capability::capability(const std::string& name, const std::string& id)
+    : m_name(name), m_id(id) {}
 
-capability::capability(const std::string& name, 
+capability::capability(const std::string& name, const std::string& id,
     std::vector<std::shared_ptr<parameter>> params) 
-    : m_name(name) {
+    : m_name(name), m_id(id) {
 
     for(auto param : params) add_parameter(param);    
 }
@@ -35,9 +35,10 @@ void capability::add_parameter(std::shared_ptr<parameter> param) {
 }
 
 std::string capability::fullname() {
-    return (m_category? m_category->fullname() : std::string("???")) + "." + m_name;
+    return (m_category? m_category->fullname() : std::string("???")) + "/" + m_id;
 }
 
+std::string capability::id()     { return m_id;       }
 std::string capability::name()   { return m_name;     }
 category*   capability::parent() { return m_category; }
 

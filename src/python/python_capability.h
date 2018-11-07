@@ -21,6 +21,8 @@ public:
         const std::vector<std::shared_ptr<parameter>> params);
 
     result execute(json::value& params) override;
+
+    py::function pycapability();
 private:
     // the python method to be executed
     py::function m_pycapability;

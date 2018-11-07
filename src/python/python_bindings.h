@@ -32,12 +32,13 @@ PYBIND11_EMBEDDED_MODULE(servant, m) {
     py::class_<python_module, module>(m, "Module");
     
     py::class_<python_category, category, std::shared_ptr<python_category>>(m, "Category")
-        .def(py::init<const std::string&>())
-        .def(py::init<const std::string&, const std::vector<std::shared_ptr<capability>>>());
+        .def(py::init<const std::string&, const std::string&>())
+        .def(py::init<const std::string&, const std::string&, const std::vector<std::shared_ptr<capability>>>());
 
     py::class_<python_capability, capability, std::shared_ptr<python_capability>>(m, "Capability")
         .def(py::init<const std::string&, py::function>())
-        .def(py::init<const std::string&, py::function, const std::vector<std::shared_ptr<parameter>>>());
+        .def(py::init<const std::string&, py::function, const std::vector<std::shared_ptr<parameter>>>())
+        .def_property_readonly("function", &python_capability::pycapability);
 
 
     // PARAMETERS

@@ -23,7 +23,7 @@ std::string module::version()  { return m_version; }
 
 void module::add_category(const std::shared_ptr<category> category) {
     category->parent(this);
-    m_categories[category->name()] = category;
+    m_categories[category->id()] = category;
 }
 
 std::shared_ptr<category> module::find_category(const std::string category) {
@@ -38,7 +38,7 @@ result module::pass_execution(
     const std::string& capability,
     json::value& args) {
 
-    return m_categories[category]->pass_execution(capability, args); 
+    return m_categories.at(category)->pass_execution(capability, args); 
 }
 
 json::value module::define() {

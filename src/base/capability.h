@@ -28,8 +28,8 @@ class category;
 
 class capability : public i_definable {
 public:
-    capability(const std::string& name);
-    capability(const std::string& name, 
+    capability(const std::string& name, const std::string& id);
+    capability(const std::string& name, const std::string& id,
         std::vector<std::shared_ptr<parameter>> params);
 
     // to be overwritten by each language specific capability
@@ -38,13 +38,15 @@ public:
     
     void add_parameter(std::shared_ptr<parameter> param);
 
+    std::string id();
     std::string fullname();
     std::string name();
     category*   parent();
     void        parent(category* cat);
 protected:
-    std::string  m_name;
-    category* m_category;
+    std::string m_name;
+    std::string m_id;
+    category*   m_category;
 
     std::vector<std::shared_ptr<parameter>> m_params;
 };

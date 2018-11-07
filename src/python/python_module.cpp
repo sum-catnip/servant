@@ -17,35 +17,44 @@ python_module::python_module(
 
 void python_module::load_module() {
     try {
-        
         // this should exist over the lifespan of the program
         static py::scoped_interpreter interpreter{};
+        static py::gil_scoped_release release_gil{};
 
-        py::module::import("servant");
-        py::module main  = py::module::import("__main__");
-        py::dict globals = main.attr("__dict__");
+        try {
+            py::gil_scoped_acquire gil{};
+            gil.inc_ref();
 
-        py::dict locals;
-        locals["module_name"] = m_id;
-        locals["path"]        = m_modulefile;
-        locals["module"]      = py::cast(this);
+            py::module::import("servant");
+            py::module main  = py::module::import("__main__");
+            py::dict globals = main.attr("__dict__");
 
-        py::eval<py::eval_statements>(
-            "import importlib.util\n"
-            "spec  = importlib.util.spec_from_file_location(module_name, path)\n"
-            "pymod = importlib.util.module_from_spec(spec)\n"
-            "pymod.__dict__['__module__'] = module\n"
-            "spec.loader.exec_module(pymod)",
-            globals,
-            locals);
+            py::dict locals;
+            locals["module_name"] = m_id;
+            locals["path"]        = m_modulefile;
+            locals["module"]      = py::cast(this);
 
-        py::module mod = locals["pymod"];
-        m_pymod = mod;
+            py::eval<py::eval_statements>(
+                "import importlib.util\n"
+                "spec  = importlib.util.spec_from_file_location(module_name, path)\n"
+                "pymod = importlib.util.module_from_spec(spec)\n"
+                "pymod.__dict__['__module__'] = module\n"
+                "spec.loader.exec_module(pymod)",
+                globals,
+                locals);
+
+            py::module mod = locals["pymod"];
+            m_pymod = mod;
+        }
+        catch(py::error_already_set& ex) {
+            logger::log(logger::level::ERROR,
+                m_name + " threw an unhandled exception: \n" + 
+                ex.what()
+            );
+        }
+        //PyThreadState* state = PyEval_SaveThread();
     }
-    catch(py::error_already_set& ex) {
-        logger::log(logger::level::ERROR,
-            m_name + " threw an unhandled exception: \n" + 
-            ex.what()
-        );
+    catch(std::exception) {
+        logger::log(logger::level::ERROR, "something strange happened...");
     }
 }
