@@ -18,7 +18,9 @@ capability::capability(const std::string& name, const std::string& id,
 json::value capability::define() {
     json::value j;
 
+    j[L"fullname"] = json::value::string(conversions::to_string_t(fullname()));
     j[L"name"] = json::value::string(conversions::to_string_t(m_name));
+    j[L"id"]   = json::value::string(conversions::to_string_t(m_id));
 
     std::vector<json::value> json_params{};
     for(auto& param : m_params)

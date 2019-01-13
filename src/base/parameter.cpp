@@ -7,10 +7,17 @@ void        parameter::parent(capability* cap) { m_capability = cap; }
 
 json::value parameter::define() {
     json::value j;
-    j[L"id"] = json::value::string(conversions::to_string_t(id()));
+
+    j[L"fullname"] = json::value::string(conversions::to_string_t(fullname()));
+    j[L"id"]       = json::value::string(conversions::to_string_t(id()));
+    j[L"name"]     = json::value::string(conversions::to_string_t("N/A"));
+
     return j; 
 }
 
+std::string parameter::fullname() {
+    return (parent()? parent()->fullname() : std::string("???")) + "/" + id();
+}
 
 // TEXT
 

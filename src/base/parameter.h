@@ -15,6 +15,8 @@ public:
     // returns the stucture of the parameter as json (defines the values)
     virtual json::value define() override;
 
+
+    std::string fullname();
     capability* parent();
     void        parent(capability* cap);
 protected:
