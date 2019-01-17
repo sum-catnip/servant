@@ -12,7 +12,6 @@ category::category(const std::string& name, const std::string& id,
 
 void category::add_capability(std::shared_ptr<capability> capability) {
     capability->parent(this);
-    // maybe use unique id's instead of display names?
     m_capabilities[capability->id()] = capability;
 }
 
@@ -40,7 +39,9 @@ result category::pass_execution(const std::string& capability, json::value& args
 json::value category::define() {
     json::value j;
 
+    j[L"fullname"] = json::value::string(conversions::to_string_t(fullname()));
     j[L"name"] = json::value::string(conversions::to_string_t(m_name));
+    j[L"id"]   = json::value::string(conversions::to_string_t(m_id));
 
     std::vector<json::value> json_capabilities{};
     for(auto& cap : m_capabilities)

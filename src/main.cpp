@@ -5,7 +5,7 @@
 int main(int argc, char** argv) {
     logger::log(logger::level::DEBUG, "waddup pimps");
 
-    servant* s = new servant("../../modules", U("http://localhost:6969"));
+    servant* s = new servant("modules", U("http://*:6969"));
     s->start();
 
     getchar();

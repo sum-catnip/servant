@@ -46,7 +46,7 @@ PYBIND11_EMBEDDED_MODULE(servant, m) {
     py::class_<parameter, std::shared_ptr<parameter>>(m, "BaseParameter");
 
     py::class_<text, parameter, std::shared_ptr<text>>(m, "Text")
-        .def(py::init<>())
+        .def(py::init<const std::string&>())
         .def_property_readonly("value", &text::value);
 }
 

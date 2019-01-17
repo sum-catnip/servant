@@ -26,11 +26,11 @@ class TestCat(Category):
         print('init called in testcat')
         super().__init__("testcat", "testcat")
     
-    @capability('testcap 1', servant.Text())
+    @capability('testcap 1', servant.Text("kek"))
     def testcap1(self, text):
         print('testcap1 called with {}'.format(text.value))
 
-    @capability('testcap 2', servant.Text(), servant.Text())
+    @capability('testcap 2', servant.Text("topkek"), servant.Text("salat"))
     def testcap2(self, text1, text2):
         raise EnvironmentError('hi')
         print('testcap2 called with {}'.format(text1))

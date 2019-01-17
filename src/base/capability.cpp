@@ -18,7 +18,9 @@ capability::capability(const std::string& name, const std::string& id,
 json::value capability::define() {
     json::value j;
 
+    j[L"fullname"] = json::value::string(conversions::to_string_t(fullname()));
     j[L"name"] = json::value::string(conversions::to_string_t(m_name));
+    j[L"id"]   = json::value::string(conversions::to_string_t(m_id));
 
     std::vector<json::value> json_params{};
     for(auto& param : m_params)
@@ -31,6 +33,8 @@ json::value capability::define() {
 
 void capability::add_parameter(std::shared_ptr<parameter> param) {
     param->parent(this);
+    // this is not multithreading safe!
+    param->id(std::to_string(m_params.size()));
     m_params.push_back(param);
 }
 

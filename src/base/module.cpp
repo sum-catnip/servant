@@ -44,10 +44,11 @@ result module::pass_execution(
 json::value module::define() {
     json::value j;
 
-    j[L"id"]      = json::value::string(conversions::to_string_t(m_id));
-    j[L"name"]    = json::value::string(conversions::to_string_t(m_name));
-    j[L"version"] = json::value::string(conversions::to_string_t(m_version));
-    j[L"author"]  = json::value::string(conversions::to_string_t(m_author));
+    j[L"id"]       = json::value::string(conversions::to_string_t(m_id));
+    j[L"name"]     = json::value::string(conversions::to_string_t(m_name));
+    j[L"version"]  = json::value::string(conversions::to_string_t(m_version));
+    j[L"author"]   = json::value::string(conversions::to_string_t(m_author));
+    j[L"fullname"] = json::value::string(conversions::to_string_t(fullname()));
 
     std::vector<json::value> json_categories{};
     for(auto& cat : m_categories)
