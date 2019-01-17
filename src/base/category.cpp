@@ -12,7 +12,6 @@ category::category(const std::string& name, const std::string& id,
 
 void category::add_capability(std::shared_ptr<capability> capability) {
     capability->parent(this);
-    // maybe use unique id's instead of display names?
     m_capabilities[capability->id()] = capability;
 }
 

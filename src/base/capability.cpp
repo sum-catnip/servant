@@ -33,6 +33,8 @@ json::value capability::define() {
 
 void capability::add_parameter(std::shared_ptr<parameter> param) {
     param->parent(this);
+    // this is not multithreading safe!
+    param->id(std::to_string(m_params.size()));
     m_params.push_back(param);
 }
 
