@@ -30,6 +30,8 @@ void parameter::id(const std::string& id) { m_id = id; }
 
 // TEXT
 
+const std::string text::TYPE = "text";
+
 text::text() : parameter(TYPE) { }
 text::text(const std::string& name) : parameter(name, TYPE) { }
 

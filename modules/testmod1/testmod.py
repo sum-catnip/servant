@@ -13,7 +13,7 @@ def capability(name, *args):
 
 class Category(servant.Category):
     def __init__(self, name, id_):
-        # need to do this before getmembers to prevent 'MemoryError: bad allocation'
+        # need to do this before getmembers to prevent a MemoryError
         super().__init__(name, id_)
         for item in inspect.getmembers(self):
             value = item[1]

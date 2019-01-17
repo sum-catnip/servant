@@ -37,14 +37,14 @@ class text : public parameter {
 public:
     text();
     text(const std::string& name);
-
+    
     std::shared_ptr<parameter> parse(json::value& input) override;
     json::value define() override;
 
     std::string value();
 private:
     std::string m_value;
-    const std::string TYPE = "text";
+    static const std::string TYPE;
 };
 
 #endif
