@@ -71,16 +71,14 @@ void module_handler::load_modules(const std::string& modules_path) {
 
 result module_handler::pass_execution(
     const std::string& module_id,
-    const std::string& module_version,
     const std::string& category,
     const std::string& capability,
     json::value& args) {
         
-    // put python module stuff in generic module
-    try { return find_module(module_id, module_version)->pass_execution(category, capability, args); }
+    try { return find_module(module_id)->pass_execution(category, capability, args); }
     catch(std::out_of_range& ex) {
         std::string capability_full = 
-            module_id + "-" + module_version + "." + category + capability;
+            module_id + "/" + category + "/" + capability;
 
         std::string error = 
             "there was an attempt to execute capability [" + capability_full + "] "
@@ -97,10 +95,14 @@ json::value module_handler::define() {
     json::value j;
     std::vector<json::value> json_modules{};
 
+    j[L"id"]       = json::value::string(conversions::to_string_t(""));
+    j[L"fullname"] = json::value::string(conversions::to_string_t(""));
+    j[L"name"]     = json::value::string(conversions::to_string_t(""));
+
     for(auto& mod : m_modules)
         json_modules.push_back(mod.second->define());
 
-    j[L"modules"] = json::value::array(json_modules);
+    j[L"childs"] = json::value::array(json_modules);
 
     return j;
 }
@@ -128,27 +130,7 @@ void module_handler::load_module(const fs::path& modpath, json::value& config_j)
 
         return;
     }
-    /*
-    js id_j       = config_j["id"];
-    js lang_j     = config_j["lang"];
-    js name_j     = config_j["name"];
-    js author_j   = config_j["author"];
-    js version_j  = config_j["version"];
-    js modfile_j  = config_j["modfile"];
 
-    // check if all json fields are valid strings
-    // emphasis on the not operator :P
-    if(! (lang_j.is_string() || modfile_j.is_string() || 
-          name_j.is_string() || version_j.is_string() ||
-          id_j.is_string()   || author_j.is_string())) {
-           
-        logger::log(logger::level::ERROR, 
-            "the module at [" + modpath.string() + "] has an invalid config "
-            "because one or more fields are invalid strings");
-
-        return;
-    }
-    */
     // check if modfile exists and transform to absolute path
     try { modfile = (modpath / modfile).string(); }
     catch(fs::filesystem_error& ex) {
@@ -186,25 +168,11 @@ void module_handler::load_module(const fs::path& modpath, json::value& config_j)
     }
 }
 
-const std::unique_ptr<module>& module_handler::find_module(
-    const std::string& module_id, 
-    const std::string& module_version) {
-
-    try {
-        auto& mod = m_modules.at(module_id);
-        if(mod->version() != module_version)
-            throw std::out_of_range("will be relaced lol");
-
-        return mod;
-    }
-    catch(const std::out_of_range&) {
-        throw std::out_of_range(
-            "no module named " + module_id + " in version " + module_version + " found");
-    }
-}
-
 const std::unique_ptr<module>& module_handler::find_module(const std::string& module_id) {
-    return m_modules.at(module_id);
+    try { return m_modules.at(module_id); }
+    catch(const std::out_of_range&) {
+        throw std::out_of_range("no module named " + module_id + " found");
+    }
 }
 
 module_handler::language module_handler::parse_lang(const std::string& lang_string) {
