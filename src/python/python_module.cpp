@@ -36,6 +36,9 @@ void python_module::load_module() {
 
             py::eval<py::eval_statements>(
                 "import importlib.util\n"
+                "import sys\n"
+                "import os\n"
+                "sys.path.append(os.path.abspath('.'))\n"
                 "spec  = importlib.util.spec_from_file_location(module_name, path)\n"
                 "pymod = importlib.util.module_from_spec(spec)\n"
                 "pymod.__dict__['__module__'] = module\n"
@@ -52,7 +55,6 @@ void python_module::load_module() {
                 ex.what()
             );
         }
-        //PyThreadState* state = PyEval_SaveThread();
     }
     catch(std::exception) {
         logger::log(logger::level::ERROR, "something strange happened...");
