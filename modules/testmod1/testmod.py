@@ -1,42 +1,35 @@
-import inspect
+import importlib
+import ctypes
+import threading
+
 import servant
+import support
 
 print('waddup pimps from testmod1')
 
-def capability(name, *args):
-    def decorator(func): 
-        func.capability_name = name
-        func.capability_args = args
-        return func
-    return decorator
-
-
-class Category(servant.Category):
-    def __init__(self, name, id_):
-        # need to do this before getmembers to prevent a MemoryError
-        super().__init__(name, id_)
-        for item in inspect.getmembers(self):
-            value = item[1]
-            if hasattr(value, 'capability_name') and hasattr(value, 'capability_args'):
-                self.add(servant.Capability(value.capability_name, value, list(value.capability_args)))
-
-
-class TestCat(Category):
+class TestCat(support.Category):
     def __init__(self):
         print('init called in testcat')
         super().__init__("testcat", "testcat")
     
-    @capability('testcap 1', servant.Text("kek"))
-    def testcap1(self, text):
-        print('testcap1 called with {}'.format(text.value))
+    @support.capability('reload modules')
+    def reload_mod(self):
+        importlib.reload(__module__)
 
-    @capability('testcap 2', servant.Text("topkek"), servant.Text("salat"))
-    def testcap2(self, text1, text2):
-        raise EnvironmentError('hi')
-        print('testcap2 called with {}'.format(text1))
+    def open_msgbox(self, title, msg):
+        MessageBox = ctypes.windll.user32.MessageBoxW
+        MessageBox(None, msg, title, 0)
+
+    @support.capability('Message Box', servant.Text("title"), servant.Text("message"))
+    def message_box(self, title, message):
+        threading.Thread(
+            target=self.open_msgbox,
+            args=(title.value, message.value)
+        ).start()
+
+    @support.capability('throw exception', servant.Text("text"))
+    def throw_exception(self, text):
+        raise EnvironmentError(text)
 
 cat = TestCat()
 __module__.add(cat)
-
-print(cat.testcap1)
-print(cat.testcap2)
