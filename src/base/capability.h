@@ -9,8 +9,6 @@
 #include "i_definable.h"
 #include "parameter.h"
 
-
-
 class result {
 public:
     enum class type {OK, ERROR};

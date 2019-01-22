@@ -128,27 +128,7 @@ void module_handler::load_module(const fs::path& modpath, json::value& config_j)
 
         return;
     }
-    /*
-    js id_j       = config_j["id"];
-    js lang_j     = config_j["lang"];
-    js name_j     = config_j["name"];
-    js author_j   = config_j["author"];
-    js version_j  = config_j["version"];
-    js modfile_j  = config_j["modfile"];
 
-    // check if all json fields are valid strings
-    // emphasis on the not operator :P
-    if(! (lang_j.is_string() || modfile_j.is_string() || 
-          name_j.is_string() || version_j.is_string() ||
-          id_j.is_string()   || author_j.is_string())) {
-           
-        logger::log(logger::level::ERROR, 
-            "the module at [" + modpath.string() + "] has an invalid config "
-            "because one or more fields are invalid strings");
-
-        return;
-    }
-    */
     // check if modfile exists and transform to absolute path
     try { modfile = (modpath / modfile).string(); }
     catch(fs::filesystem_error& ex) {

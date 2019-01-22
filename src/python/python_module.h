@@ -21,7 +21,6 @@ public:
         const std::string& version,
         const std::string& author,
         const std::string& module);
-
 private:
     // the python module
     py::module m_pymod;
