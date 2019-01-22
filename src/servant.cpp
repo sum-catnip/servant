@@ -35,34 +35,34 @@ void servant::handle_get(http_request msg) {
                     msg.reply(status_codes::OK, m_modules.define());
                     break;
 
-                case 3: // modules/module/version
+                case 2: // modules/module
                     msg.reply(status_codes::OK, m_modules
-                        .find_module(parts[1], parts[2])
+                        .find_module(parts[1])
                         ->define());
                     break;
 
-                case 4: // modules/module/version/category
+                case 3: // modules/module/category
                     msg.reply(status_codes::OK, m_modules
-                        .find_module(parts[1], parts[2])
-                        ->find_category(parts[3])
-                        ->define());
-
-                    break;
-
-                case 5: // modules/module/version/category/capability
-                    msg.reply(status_codes::OK, m_modules
-                        .find_module(parts[1], parts[2])
-                        ->find_category(parts[3])
-                        ->find_capability(parts[4])
+                        .find_module(parts[1])
+                        ->find_category(parts[2])
                         ->define());
 
                     break;
 
-                case 6: // modules/module/version/category/capability/0
+                case 4: // modules/module/category/capability
                     msg.reply(status_codes::OK, m_modules
-                        .find_module(parts[1], parts[2])
-                        ->find_category(parts[3])
-                        ->find_capability(parts[4])
+                        .find_module(parts[1])
+                        ->find_category(parts[2])
+                        ->find_capability(parts[3])
+                        ->define());
+
+                    break;
+
+                case 5: // modules/module/category/capability/0
+                    msg.reply(status_codes::OK, m_modules
+                        .find_module(parts[1])
+                        ->find_category(parts[2])
+                        ->find_capability(parts[3])
                         ->define());
                     break;
 
@@ -96,24 +96,11 @@ void servant::handle_post(http_request msg) {
             result res = m_modules.pass_execution(
                 parts.at(1), 
                 parts.at(2), 
-                parts.at(3), 
-                parts.at(4), 
+                parts.at(3),
                 msg.extract_json().get()
             );
 
-            switch(res.result_type()) {
-                case result::type::ERROR:
-                    msg.reply(status_codes::InternalError, res.result_message());
-                    break;
-
-                case result::type::OK:
-                    msg.reply(status_codes::OK, res.result_message());
-                    break;
-
-                default:
-                    msg.reply(status_codes::NotImplemented, "the servant author forgot to implement this result type.. lol");
-                    break;
-            }
+            msg.reply(status_codes::OK, res.serialize());
         }
     }
     catch(const std::out_of_range& e) {

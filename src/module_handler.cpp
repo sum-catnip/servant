@@ -71,16 +71,14 @@ void module_handler::load_modules(const std::string& modules_path) {
 
 result module_handler::pass_execution(
     const std::string& module_id,
-    const std::string& module_version,
     const std::string& category,
     const std::string& capability,
     json::value& args) {
         
-    // put python module stuff in generic module
-    try { return find_module(module_id, module_version)->pass_execution(category, capability, args); }
+    try { return find_module(module_id)->pass_execution(category, capability, args); }
     catch(std::out_of_range& ex) {
         std::string capability_full = 
-            module_id + "-" + module_version + "." + category + capability;
+            module_id + "/" + category + "/" + capability;
 
         std::string error = 
             "there was an attempt to execute capability [" + capability_full + "] "
@@ -97,10 +95,14 @@ json::value module_handler::define() {
     json::value j;
     std::vector<json::value> json_modules{};
 
+    j[L"id"]       = json::value::string(conversions::to_string_t(""));
+    j[L"fullname"] = json::value::string(conversions::to_string_t(""));
+    j[L"name"]     = json::value::string(conversions::to_string_t(""));
+
     for(auto& mod : m_modules)
         json_modules.push_back(mod.second->define());
 
-    j[L"modules"] = json::value::array(json_modules);
+    j[L"childs"] = json::value::array(json_modules);
 
     return j;
 }
@@ -166,25 +168,11 @@ void module_handler::load_module(const fs::path& modpath, json::value& config_j)
     }
 }
 
-const std::unique_ptr<module>& module_handler::find_module(
-    const std::string& module_id, 
-    const std::string& module_version) {
-
-    try {
-        auto& mod = m_modules.at(module_id);
-        if(mod->version() != module_version)
-            throw std::out_of_range("will be relaced lol");
-
-        return mod;
-    }
-    catch(const std::out_of_range&) {
-        throw std::out_of_range(
-            "no module named " + module_id + " in version " + module_version + " found");
-    }
-}
-
 const std::unique_ptr<module>& module_handler::find_module(const std::string& module_id) {
-    return m_modules.at(module_id);
+    try { return m_modules.at(module_id); }
+    catch(const std::out_of_range&) {
+        throw std::out_of_range("no module named " + module_id + " found");
+    }
 }
 
 module_handler::language module_handler::parse_lang(const std::string& lang_string) {

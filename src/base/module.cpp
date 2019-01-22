@@ -54,7 +54,7 @@ json::value module::define() {
     for(auto& cat : m_categories)
         json_categories.push_back(cat.second->define());
 
-    j[L"categories"] = json::value::array(json_categories);
+    j[L"childs"] = json::value::array(json_categories);
 
     return j;
 }

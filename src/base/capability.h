@@ -17,6 +17,8 @@ public:
 
     type result_type();
     std::string result_message();
+
+    json::value serialize();
 private:
     std::string m_message;
     type m_type;

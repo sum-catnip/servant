@@ -47,7 +47,7 @@ json::value category::define() {
     for(auto& cap : m_capabilities)
         json_capabilities.push_back(cap.second->define());
 
-    j[L"capabilities"] = json::value::array(json_capabilities);
+    j[L"childs"] = json::value::array(json_capabilities);
 
     return j;
 }

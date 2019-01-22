@@ -21,7 +21,6 @@ public:
     void load_modules(const std::string& modules_path);
     result pass_execution(
         const std::string& module_id,
-        const std::string& module_version,
         const std::string& category,
         const std::string& capability,
         json::value& args);
@@ -30,10 +29,6 @@ public:
 
     // const ref to unique_ptr since we can't copy a unique_ptr
     // i mean .. thats kinds the point isn't it?
-    const std::unique_ptr<module>& find_module(
-        const std::string& module_id, 
-        const std::string& module_version);
-
     const std::unique_ptr<module>& find_module(const std::string& module_id);
 private:
     const std::string CONFIG_FILENAME{"config.json"};

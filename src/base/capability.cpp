@@ -26,7 +26,7 @@ json::value capability::define() {
     for(auto& param : m_params)
         json_params.push_back(param->define());
 
-    j[L"parameters"] = json::value::array(json_params);
+    j[L"childs"] = json::value::array(json_params);
 
     return j;
 }
@@ -57,6 +57,14 @@ result::result(type result_type, const std::string& message)
     if(result_type == type::ERROR) {
         logger::log(logger::level::ERROR, message);
     }
+}
+
+json::value result::serialize() {
+    json::value j;
+    j[L"message"] = json::value::string(conversions::to_string_t(m_message));
+    j[L"type"]    = json::value::string(conversions::to_string_t(std::to_string((int)m_type)));
+
+    return j;
 }
 
 result::type result::result_type()    { return m_type;    }
