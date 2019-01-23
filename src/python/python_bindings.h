@@ -30,7 +30,16 @@ PYBIND11_EMBEDDED_MODULE(servant, m) {
         .def("add", &capability::add_parameter);
 
     py::class_<python_module, module>(m, "Module");
-    
+
+    py::class_<result> res(m, "Result");
+        
+    res.def(py::init<result::type, const std::string&>());
+
+    py::enum_<result::type>(res, "ResultType")
+        .value("OK", result::type::OK)
+        .value("ERROR", result::type::ERROR)
+        .export_values();
+
     py::class_<python_category, category, std::shared_ptr<python_category>>(m, "Category")
         .def(py::init<const std::string&, const std::string&>())
         .def(py::init<const std::string&, const std::string&, const std::vector<std::shared_ptr<capability>>>());
