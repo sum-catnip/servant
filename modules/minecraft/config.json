@@ -1,0 +1,8 @@
+{
+    "id":      "minecraft",
+    "name":    "Minecraft Server",
+    "author":  "catnip",
+    "version": "1.0.0",
+    "lang":    "python",
+    "modfile": "minecraft.py"
+}
