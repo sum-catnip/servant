@@ -1,4 +1,3 @@
-import importlib
 import ctypes
 import threading
 
@@ -11,10 +10,6 @@ class TestCat(support.Category):
     def __init__(self):
         print('init called in testcat')
         super().__init__("testcat", "testcat")
-    
-    @support.capability('reload modules')
-    def reload_mod(self):
-        importlib.reload(__module__)
 
     def open_msgbox(self, title, msg):
         MessageBox = ctypes.windll.user32.MessageBoxW
