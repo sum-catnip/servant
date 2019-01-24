@@ -33,7 +33,6 @@ public:
 private:
     const std::string CONFIG_FILENAME{"config.json"};
     std::map<std::string, std::unique_ptr<module>> m_modules;
-    //std::vector<std::unique_ptr<module>> m_modules;
     void load_module(const fs::path& modpath, json::value& config_j);
     language parse_lang(const std::string& lang_string);
 };
