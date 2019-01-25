@@ -21,6 +21,7 @@ class TestCat(support.Category):
             target=self.open_msgbox,
             args=(title.value, message.value)
         ).start()
+        return servant.Result(servant.Result.OK, "yay")
 
     @support.capability('throw exception', servant.Text("text"))
     def throw_exception(self, text):
